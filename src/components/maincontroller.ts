@@ -15,6 +15,7 @@ import {
     broadcastToMessageBus
 } from '../helpers';
 import {
+    reportPlaybackStart,
     reportPlaybackProgress,
     reportPlaybackStopped,
     play,
@@ -220,6 +221,27 @@ window.playerManager.addEventListener(
             window.currentPlaylistIndex = -1;
             DocumentManager.startBackdropInterval();
         }
+    }
+);
+
+// Notify of playback start as soon as the media is playing. Only then is the tick position good.
+window.playerManager.addEventListener(
+    cast.framework.events.EventType.PLAYING,
+    (): void => {
+        reportPlaybackStart(
+            playbackMgr.playbackState,
+            getReportingParams(playbackMgr.playbackState)
+        );
+    }
+);
+// Notify of playback end just before stopping it, to get a good tick position
+window.playerManager.addEventListener(
+    cast.framework.events.EventType.REQUEST_STOP,
+    (): void => {
+        reportPlaybackStopped(
+            playbackMgr.playbackState,
+            getReportingParams(playbackMgr.playbackState)
+        );
     }
 );
 
