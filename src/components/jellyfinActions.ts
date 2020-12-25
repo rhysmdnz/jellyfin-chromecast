@@ -247,15 +247,6 @@ export function play(state: PlaybackState): void {
 }
 
 /**
- * Don't actually stop, just show the idle view after 20ms
- */
-export function stop(): void {
-    setTimeout(() => {
-        DocumentManager.setAppStatus('waiting');
-    }, 20);
-}
-
-/**
  * @param item
  * @param maxBitrate
  * @param deviceProfile
