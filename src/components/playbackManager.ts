@@ -135,7 +135,8 @@ export class playbackManager {
             options.startPositionTicks,
             options.mediaSourceId,
             options.audioStreamIndex,
-            options.subtitleStreamIndex
+            options.subtitleStreamIndex,
+            options.liveStreamId
         ).catch(broadcastConnectionErrorMessage);
 
         if (playbackInfo.ErrorCode) {
@@ -193,8 +194,6 @@ export class playbackManager {
             options.startPositionTicks
         );
 
-        const url = streamInfo.url;
-
         const mediaInfo = createMediaInformation(
             playSessionId,
             item,
@@ -215,10 +214,12 @@ export class playbackManager {
         load($scope, mediaInfo.customData, item);
         this.playerManager.load(loadRequestData);
 
+        console.log(`setting src to ${streamInfo.url}`);
         $scope.PlaybackMediaSource = mediaSource;
 
-        console.log(`setting src to ${url}`);
         $scope.mediaSource = mediaSource;
+        $scope.audioStreamIndex = streamInfo.audioStreamIndex;
+        $scope.subtitleStreamIndex = streamInfo.subtitleStreamIndex;
 
         DocumentManager.setPlayerBackdrop(item);
 
