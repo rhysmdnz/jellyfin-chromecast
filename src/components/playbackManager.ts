@@ -181,7 +181,8 @@ export class playbackManager {
             options.startPositionTicks,
             options.mediaSourceId,
             options.audioStreamIndex,
-            options.subtitleStreamIndex
+            options.subtitleStreamIndex,
+            options.liveStreamId
         ).catch(broadcastConnectionErrorMessage);
 
         if (playbackInfo.ErrorCode) {
@@ -239,8 +240,6 @@ export class playbackManager {
             options.startPositionTicks
         );
 
-        const url = streamInfo.url;
-
         const mediaInfo = createMediaInformation(
             playSessionId,
             item,
@@ -263,8 +262,10 @@ export class playbackManager {
 
         this.playbackState.PlaybackMediaSource = mediaSource;
 
-        console.log(`setting src to ${url}`);
+        console.log(`setting src to ${streamInfo.url}`);
         this.playbackState.mediaSource = mediaSource;
+        this.playbackState.audioStreamIndex = streamInfo.audioStreamIndex;
+        this.playbackState.subtitleStreamIndex = streamInfo.subtitleStreamIndex;
 
         DocumentManager.setPlayerBackdrop(item);
 
