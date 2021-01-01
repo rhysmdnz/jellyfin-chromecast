@@ -8,7 +8,8 @@ import type {
 } from '@jellyfin/sdk/lib/generated-client';
 
 import { JellyfinApi } from './components/jellyfinApi';
-import { BusMessage, ItemIndex, ItemQuery } from './types/global';
+import { PlaybackManager } from './components/playbackManager';
+import { BusMessage, ItemQuery } from './types/global';
 import { PlaybackState } from './components/playbackManager';
 
 /**
@@ -57,53 +58,6 @@ export function getReportingParams(state: PlaybackState): PlaybackProgressInfo {
         SubtitleStreamIndex: state.subtitleStreamIndex,
         VolumeLevel: Math.round(window.volume.level * 100)
     };
-}
-
-/**
- * Get information about the next item to play from window.playlist
- *
- * @returns ItemIndex including item and index, or null to end playback
- */
-export function getNextPlaybackItemInfo(): ItemIndex | null {
-    const playlist = window.playlist;
-
-    if (!playlist) {
-        return null;
-    }
-
-    let newIndex: number;
-
-    if (window.currentPlaylistIndex == -1) {
-        newIndex = 0;
-    } else {
-        switch (window.repeatMode) {
-            case 'RepeatOne':
-                newIndex = window.currentPlaylistIndex;
-                break;
-            case 'RepeatAll':
-                newIndex = window.currentPlaylistIndex + 1;
-
-                if (newIndex >= window.playlist.length) {
-                    newIndex = 0;
-                }
-
-                break;
-            default:
-                newIndex = window.currentPlaylistIndex + 1;
-                break;
-        }
-    }
-
-    if (newIndex < playlist.length) {
-        const item = playlist[newIndex];
-
-        return {
-            index: newIndex,
-            item: item
-        };
-    }
-
-    return null;
 }
 
 /**
@@ -198,7 +152,7 @@ export function getSenderReportingData(
         }
 
         if (playbackState.playNextItemBool) {
-            const nextItemInfo = getNextPlaybackItemInfo();
+            const nextItemInfo = PlaybackManager.getNextPlaybackItemInfo();
 
             if (nextItemInfo) {
                 state.NextMediaType = nextItemInfo.item.MediaType;
