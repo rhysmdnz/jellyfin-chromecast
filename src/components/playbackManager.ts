@@ -1,5 +1,4 @@
 import {
-    getNextPlaybackItemInfo,
     broadcastConnectionErrorMessage,
     createStreamInfo
 } from '../helpers';
