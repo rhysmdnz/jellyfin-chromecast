@@ -1,7 +1,8 @@
-import type {
+import {
     BaseItemDto,
     MediaSourceInfo,
-    PlayMethod
+    PlayMethod,
+    RepeatMode
 } from '@jellyfin/sdk/lib/generated-client';
 
 import {
@@ -352,10 +353,10 @@ export abstract class PlaybackManager {
             newIndex = 0;
         } else {
             switch (window.repeatMode) {
-                case 'RepeatOne':
+                case RepeatMode.RepeatOne:
                     newIndex = this.activePlaylistIndex;
                     break;
-                case 'RepeatAll':
+                case RepeatMode.RepeatAll:
                     newIndex = this.activePlaylistIndex + 1;
 
                     if (newIndex >= this.activePlaylist.length) {
