@@ -275,6 +275,16 @@ export function getMetadata(item: BaseItemDto): any {
 }
 
 /**
+ * Check if a media source is an HLS stream
+ *
+ * @param mediaSource
+ * @returns
+ */
+export function isHlsStream(mediaSource: MediaSourceInfo): boolean {
+    return mediaSource.TranscodingSubProtocol == 'hls';
+}
+
+/**
  * Create the necessary information about an item
  * needed for playback
  *
@@ -324,7 +334,7 @@ export function createStreamInfo(
                 <string>mediaSource.TranscodingUrl
             );
 
-            if (mediaSource.TranscodingSubProtocol == 'hls') {
+            if (isHlsStream(mediaSource)) {
                 mediaUrl += seekParam;
                 playerStartPositionTicks = startPosition || 0;
                 contentType = 'application/x-mpegURL';
