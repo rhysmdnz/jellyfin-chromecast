@@ -98,6 +98,13 @@ export abstract class PlaybackManager {
         );
     }
 
+    static isBuffering(): boolean {
+        return (
+            this.playerManager.getPlayerState() ===
+            cast.framework.messages.PlayerState.BUFFERING
+        );
+    }
+
     static async playFromOptions(options: any): Promise<void> {
         const firstItem = options.items[0];
 
