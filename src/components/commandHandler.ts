@@ -8,6 +8,7 @@ import {
     SetRepeatModeRequest,
     SupportedCommands
 } from '../types/global';
+import { AppStatus } from '../types/appStatus';
 import {
     translateItems,
     shuffle,
@@ -137,7 +138,7 @@ export abstract class CommandHandler {
 
     static IdentifyHandler(): void {
         if (!PlaybackManager.isPlaying()) {
-            DocumentManager.setAppStatus('waiting');
+            DocumentManager.setAppStatus(AppStatus.Waiting);
             DocumentManager.startBackdropInterval();
         } else {
             // When a client connects send back the initial device state (volume etc) via a playbackstop message

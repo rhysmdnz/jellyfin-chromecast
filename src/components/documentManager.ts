@@ -1,6 +1,7 @@
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client';
 
 import { parseISO8601Date } from '../helpers';
+import { AppStatus } from '../types/appStatus';
 import { JellyfinApi } from './jellyfinApi';
 import { deviceIds, getActiveDeviceId } from './castDevices';
 
@@ -10,8 +11,7 @@ export abstract class DocumentManager {
     // Timer state - so that we don't start the interval more than necessary
     private static backdropTimer = 0;
 
-    // TODO make enum
-    private static status = '';
+    private static status = AppStatus.Unset;
 
     /**
      * Hide the document body on chromecast audio to save resources
@@ -186,7 +186,7 @@ export abstract class DocumentManager {
             }
 
             // Switch visible view!
-            this.setAppStatus('details');
+            this.setAppStatus(AppStatus.Details);
         });
     }
 
@@ -286,7 +286,7 @@ export abstract class DocumentManager {
      *
      * @param status - to set
      */
-    public static setAppStatus(status: string): void {
+    public static setAppStatus(status: AppStatus): void {
         this.status = status;
         document.body.className = status;
     }
@@ -296,7 +296,7 @@ export abstract class DocumentManager {
      *
      * @returns app status
      */
-    public static getAppStatus(): string {
+    public static getAppStatus(): AppStatus {
         return this.status;
     }
 

@@ -6,6 +6,8 @@ import type {
 
 import { broadcastConnectionErrorMessage, createStreamInfo } from '../helpers';
 
+import { AppStatus } from '../types/appStatus';
+
 import {
     getPlaybackInfo,
     getLiveStream,
@@ -188,7 +190,7 @@ export abstract class PlaybackManager {
         options: any
     ): Promise<void> {
         this.playbackState.isChangingStream = false;
-        DocumentManager.setAppStatus('loading');
+        DocumentManager.setAppStatus(AppStatus.Loading);
 
         const maxBitrate = await getMaxBitrate();
         const deviceProfile = getDeviceProfile({
@@ -252,7 +254,7 @@ export abstract class PlaybackManager {
         mediaSource: MediaSourceInfo,
         options: any
     ): void {
-        DocumentManager.setAppStatus('loading');
+        DocumentManager.setAppStatus(AppStatus.Loading);
 
         const streamInfo = createStreamInfo(
             item,
@@ -313,7 +315,7 @@ export abstract class PlaybackManager {
         } else {
             this.playbackState.playNextItemBool = false;
 
-            DocumentManager.setAppStatus('waiting');
+            DocumentManager.setAppStatus(AppStatus.Waiting);
 
             stopPingInterval();
 
@@ -369,7 +371,7 @@ export abstract class PlaybackManager {
      * Attempt to clean the receiver state.
      */
     static resetPlaybackScope(): void {
-        DocumentManager.setAppStatus('waiting');
+        DocumentManager.setAppStatus(AppStatus.Waiting);
 
         this.playbackState.startPositionTicks = 0;
         DocumentManager.setWaitingBackdrop(null, null);

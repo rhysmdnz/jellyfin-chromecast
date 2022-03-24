@@ -8,6 +8,7 @@ import type {
 } from '@jellyfin/sdk/lib/generated-client';
 
 import { getSenderReportingData, broadcastToMessageBus } from '../helpers';
+import { AppStatus } from '../types/appStatus';
 import { JellyfinApi } from './jellyfinApi';
 import { DocumentManager } from './documentManager';
 import { PlaybackManager, PlaybackState } from './playbackManager';
@@ -208,7 +209,7 @@ export function load(customData: any, serverItem: BaseItemDto): void {
 
     state.item = serverItem;
 
-    DocumentManager.setAppStatus('backdrop');
+    DocumentManager.setAppStatus(AppStatus.Backdrop);
     state.mediaType = serverItem?.MediaType;
 }
 
@@ -224,18 +225,18 @@ export function load(customData: any, serverItem: BaseItemDto): void {
  */
 export function play(state: PlaybackState): void {
     if (
-        DocumentManager.getAppStatus() == 'backdrop' ||
-        DocumentManager.getAppStatus() == 'playing-with-controls' ||
-        DocumentManager.getAppStatus() == 'playing' ||
-        DocumentManager.getAppStatus() == 'audio'
+        DocumentManager.getAppStatus() == AppStatus.Backdrop ||
+        DocumentManager.getAppStatus() == AppStatus.PlayingWithControls ||
+        DocumentManager.getAppStatus() == AppStatus.Playing ||
+        DocumentManager.getAppStatus() == AppStatus.Audio
     ) {
         setTimeout(() => {
             window.playerManager.play();
 
             if (state.mediaType == 'Audio') {
-                DocumentManager.setAppStatus('audio');
+                DocumentManager.setAppStatus(AppStatus.Audio);
             } else {
-                DocumentManager.setAppStatus('playing-with-controls');
+                DocumentManager.setAppStatus(AppStatus.PlayingWithControls);
             }
         }, 20);
     }
