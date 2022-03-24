@@ -187,17 +187,17 @@ window.playerManager.addEventListener(
 /**
  *
  */
-function defaultOnStopped(): void {
-    PlaybackManager.onStopped();
+function defaultOnStop(): void {
+    PlaybackManager.onStop();
 }
 
 window.playerManager.addEventListener(
     cast.framework.events.EventType.MEDIA_FINISHED,
-    defaultOnStopped
+    defaultOnStop
 );
 window.playerManager.addEventListener(
     cast.framework.events.EventType.ABORT,
-    defaultOnStopped
+    defaultOnStop
 );
 
 window.playerManager.addEventListener(
@@ -215,7 +215,7 @@ window.playerManager.addEventListener(
 
         if (!PlaybackManager.playNextItem()) {
             PlaybackManager.resetPlaylist();
-            PlaybackManager.onStopped();
+            PlaybackManager.onStop();
         }
     }
 );
