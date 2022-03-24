@@ -1,4 +1,4 @@
-import { getReportingParams } from '../helpers';
+import { getReportingParams, TicksPerSecond } from '../helpers';
 import {
     DataMessage,
     DisplayRequest,
@@ -157,7 +157,7 @@ export abstract class CommandHandler {
     static SeekHandler(data: DataMessage): void {
         seek(
             PlaybackManager.playbackState,
-            (<SeekRequest>data.options).position * 10000000
+            (<SeekRequest>data.options).position * TicksPerSecond
         );
     }
 

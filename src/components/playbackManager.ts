@@ -4,7 +4,11 @@ import type {
     PlayMethod
 } from '@jellyfin/sdk/lib/generated-client';
 
-import { broadcastConnectionErrorMessage, createStreamInfo } from '../helpers';
+import {
+    broadcastConnectionErrorMessage,
+    createStreamInfo,
+    ticksToSeconds
+} from '../helpers';
 
 import { AppStatus } from '../types/appStatus';
 
@@ -282,8 +286,9 @@ export abstract class PlaybackManager {
         // If we should seek at the start, translate it
         // to seconds and give it to loadRequestData :)
         if (mediaInfo.customData.startPositionTicks > 0) {
-            loadRequestData.currentTime =
-                mediaInfo.customData.startPositionTicks / 10000000;
+            loadRequestData.currentTime = ticksToSeconds(
+                mediaInfo.customData.startPositionTicks
+            );
         }
 
         load(mediaInfo.customData, item);
