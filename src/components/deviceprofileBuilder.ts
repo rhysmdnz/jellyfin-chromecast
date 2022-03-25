@@ -208,7 +208,6 @@ function getCodecProfiles(): Array<CodecProfile> {
 
     CodecProfiles.push(aacConditions);
 
-    const maxWidth: number = getMaxWidthSupport();
     const h264Level: number = getH264LevelSupport(currentDeviceId);
     const h264Profile: string = getH264ProfileSupport(currentDeviceId);
 
@@ -233,7 +232,7 @@ function getCodecProfiles(): Array<CodecProfile> {
             createProfileCondition(
                 ProfileConditionValue.Width,
                 ProfileConditionType.LessThanEqual,
-                maxWidth.toString(),
+                getMaxWidthSupport(currentDeviceId, 'h264').toString(),
                 true
             )
         ],
@@ -266,7 +265,7 @@ function getCodecProfiles(): Array<CodecProfile> {
             createProfileCondition(
                 ProfileConditionValue.Width,
                 ProfileConditionType.LessThanEqual,
-                maxWidth.toString(),
+                getMaxWidthSupport(currentDeviceId).toString(),
                 true
             )
         ],
@@ -280,7 +279,7 @@ function getCodecProfiles(): Array<CodecProfile> {
             createProfileCondition(
                 ProfileConditionValue.Width,
                 ProfileConditionType.LessThanEqual,
-                maxWidth.toString(),
+                getMaxWidthSupport(currentDeviceId).toString(),
                 true
             )
         ],
