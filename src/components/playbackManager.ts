@@ -57,7 +57,10 @@ export abstract class PlaybackManager {
     }
 
     static isBuffering(): boolean {
-        return this.playerManager.getPlayerState() === cast.framework.messages.PlayerState.BUFFERING;
+        return (
+            this.playerManager.getPlayerState() ===
+            cast.framework.messages.PlayerState.BUFFERING
+        );
     }
 
     static async playFromOptions(options: any): Promise<void> {
@@ -237,8 +240,9 @@ export abstract class PlaybackManager {
         // If we should seek at the start, translate it
         // to seconds and give it to loadRequestData :)
         if (mediaInfo.customData.startPositionTicks > 0) {
-            loadRequestData.currentTime =
-                ticksToSeconds(mediaInfo.customData.startPositionTicks);
+            loadRequestData.currentTime = ticksToSeconds(
+                mediaInfo.customData.startPositionTicks
+            );
         }
 
         load($scope, mediaInfo.customData, item);

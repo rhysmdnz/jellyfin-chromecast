@@ -11,7 +11,7 @@ import { UserDto } from './api/generated/models/user-dto';
 import { GlobalScope, BusMessage, ItemQuery } from './types/global';
 import { AppStatus } from './types/enums';
 
-export const TicksPerSecond = 10000000
+export const TicksPerSecond = 10000000;
 
 /**
  * Get current playback position in ticks, adjusted for server seeking
@@ -20,7 +20,8 @@ export const TicksPerSecond = 10000000
  * @returns position in ticks
  */
 export function getCurrentPositionTicks($scope: GlobalScope): number {
-    let positionTicks = window.playerManager.getCurrentTimeSec() * TicksPerSecond;
+    let positionTicks =
+        window.playerManager.getCurrentTimeSec() * TicksPerSecond;
     const mediaInformation = window.playerManager.getMediaInformation();
 
     if (mediaInformation && !mediaInformation.customData.canClientSeek) {
@@ -309,10 +310,10 @@ export function getMetadata(item: BaseItemDto): any {
  * Check if a media source is an HLS stream
  *
  * @param mediaSource
- * @returns 
+ * @returns
  */
-export function isHlsStream(mediaSource: MediaSourceInfo) {
-    return mediaSource.TranscodingSubProtocol == 'hls'
+export function isHlsStream(mediaSource: MediaSourceInfo): boolean {
+    return mediaSource.TranscodingSubProtocol == 'hls';
 }
 
 /**
@@ -795,7 +796,7 @@ export function parseISO8601Date(date: string): Date {
  * @returns number of seconds
  */
 export function ticksToSeconds(ticks: number): number {
-    return ticks / TicksPerSecond
+    return ticks / TicksPerSecond;
 }
 
 /**

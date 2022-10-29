@@ -78,11 +78,11 @@ export interface SeekRequest {
 
 export interface DataMessage {
     options:
-    | PlayRequest
-    | DisplayRequest
-    | SetIndexRequest
-    | SetRepeatModeRequest
-    | SeekRequest;
+        | PlayRequest
+        | DisplayRequest
+        | SetIndexRequest
+        | SetRepeatModeRequest
+        | SeekRequest;
     command: string;
 }
 
