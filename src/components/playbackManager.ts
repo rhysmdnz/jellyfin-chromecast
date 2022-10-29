@@ -4,6 +4,8 @@ import {
     ticksToSeconds
 } from '../helpers';
 
+import { AppStatus } from '../types/enums';
+import { RepeatMode } from '../api/generated/models/repeat-mode';
 import {
     getPlaybackInfo,
     getLiveStream,
@@ -25,8 +27,7 @@ import { DocumentManager } from './documentManager';
 import { BaseItemDto } from '~/api/generated/models/base-item-dto';
 import { MediaSourceInfo } from '~/api/generated/models/media-source-info';
 
-import { AppStatus, ItemIndex } from '~/types/global';
-import { RepeatMode } from '~/api/generated';
+import { ItemIndex } from '~/types/global';
 
 export abstract class PlaybackManager {
     private static playerManager: framework.PlayerManager;

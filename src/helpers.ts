@@ -8,7 +8,8 @@ import { MediaSourceInfo } from './api/generated/models/media-source-info';
 import { BaseItemDto } from './api/generated/models/base-item-dto';
 import { BaseItemPerson } from './api/generated/models/base-item-person';
 import { UserDto } from './api/generated/models/user-dto';
-import { GlobalScope, BusMessage, ItemQuery, AppStatus } from './types/global';
+import { GlobalScope, BusMessage, ItemQuery } from './types/global';
+import { AppStatus } from './types/enums';
 
 export const TicksPerSecond = 10000000
 

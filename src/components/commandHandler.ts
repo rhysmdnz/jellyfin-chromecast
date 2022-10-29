@@ -1,6 +1,6 @@
 import { getReportingParams, TicksPerSecond } from '../helpers';
+import { AppStatus } from '../types/enums';
 import {
-    AppStatus,
     DataMessage,
     DisplayRequest,
     PlayRequest,
