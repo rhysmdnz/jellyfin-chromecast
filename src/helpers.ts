@@ -8,8 +8,11 @@ import type {
 } from '@jellyfin/sdk/lib/generated-client';
 
 import { JellyfinApi } from './components/jellyfinApi';
-import { BusMessage, ItemIndex, ItemQuery } from './types/global';
+import { PlaybackManager } from './components/playbackManager';
+import { BusMessage, ItemQuery } from './types/global';
 import { PlaybackState } from './components/playbackManager';
+
+export const TicksPerSecond = 10000000;
 
 /**
  * Get current playback position in ticks, adjusted for server seeking
@@ -18,7 +21,8 @@ import { PlaybackState } from './components/playbackManager';
  * @returns position in ticks
  */
 export function getCurrentPositionTicks(state: PlaybackState): number {
-    let positionTicks = window.playerManager.getCurrentTimeSec() * 10000000;
+    let positionTicks =
+        window.playerManager.getCurrentTimeSec() * TicksPerSecond;
     const mediaInformation = window.playerManager.getMediaInformation();
 
     if (mediaInformation && !mediaInformation.customData.canClientSeek) {
@@ -57,53 +61,6 @@ export function getReportingParams(state: PlaybackState): PlaybackProgressInfo {
         SubtitleStreamIndex: state.subtitleStreamIndex,
         VolumeLevel: Math.round(window.volume.level * 100)
     };
-}
-
-/**
- * Get information about the next item to play from window.playlist
- *
- * @returns ItemIndex including item and index, or null to end playback
- */
-export function getNextPlaybackItemInfo(): ItemIndex | null {
-    const playlist = window.playlist;
-
-    if (!playlist) {
-        return null;
-    }
-
-    let newIndex: number;
-
-    if (window.currentPlaylistIndex == -1) {
-        newIndex = 0;
-    } else {
-        switch (window.repeatMode) {
-            case 'RepeatOne':
-                newIndex = window.currentPlaylistIndex;
-                break;
-            case 'RepeatAll':
-                newIndex = window.currentPlaylistIndex + 1;
-
-                if (newIndex >= window.playlist.length) {
-                    newIndex = 0;
-                }
-
-                break;
-            default:
-                newIndex = window.currentPlaylistIndex + 1;
-                break;
-        }
-    }
-
-    if (newIndex < playlist.length) {
-        const item = playlist[newIndex];
-
-        return {
-            index: newIndex,
-            item: item
-        };
-    }
-
-    return null;
 }
 
 /**
@@ -198,7 +155,7 @@ export function getSenderReportingData(
         }
 
         if (playbackState.playNextItemBool) {
-            const nextItemInfo = getNextPlaybackItemInfo();
+            const nextItemInfo = PlaybackManager.getNextPlaybackItemInfo();
 
             if (nextItemInfo) {
                 state.NextMediaType = nextItemInfo.item.MediaType;
@@ -318,6 +275,16 @@ export function getMetadata(item: BaseItemDto): any {
 }
 
 /**
+ * Check if a media source is an HLS stream
+ *
+ * @param mediaSource
+ * @returns
+ */
+export function isHlsStream(mediaSource: MediaSourceInfo): boolean {
+    return mediaSource.TranscodingSubProtocol == 'hls';
+}
+
+/**
  * Create the necessary information about an item
  * needed for playback
  *
@@ -336,7 +303,7 @@ export function createStreamInfo(
 
     // server seeking
     const startPositionInSeekParam = startPosition
-        ? startPosition / 10000000
+        ? ticksToSeconds(startPosition)
         : 0;
     const seekParam = startPositionInSeekParam
         ? `#t=${startPositionInSeekParam}`
@@ -367,7 +334,7 @@ export function createStreamInfo(
                 <string>mediaSource.TranscodingUrl
             );
 
-            if (mediaSource.TranscodingSubProtocol == 'hls') {
+            if (isHlsStream(mediaSource)) {
                 mediaUrl += seekParam;
                 playerStartPositionTicks = startPosition || 0;
                 contentType = 'application/x-mpegURL';
@@ -789,6 +756,15 @@ export async function translateRequestedItems(
  */
 export function parseISO8601Date(date: string): Date {
     return new Date(date);
+}
+
+/**
+ * Convert ticks to seconds
+ * @param ticks - number of ticks to convert
+ * @returns number of seconds
+ */
+export function ticksToSeconds(ticks: number): number {
+    return ticks / TicksPerSecond;
 }
 
 /**

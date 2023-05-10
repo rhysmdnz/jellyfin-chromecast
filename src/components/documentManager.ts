@@ -1,6 +1,7 @@
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client';
 
-import { parseISO8601Date } from '../helpers';
+import { parseISO8601Date, TicksPerSecond, ticksToSeconds } from '../helpers';
+import { AppStatus } from '../types/appStatus';
 import { JellyfinApi } from './jellyfinApi';
 import { deviceIds, getActiveDeviceId } from './castDevices';
 
@@ -8,10 +9,9 @@ export abstract class DocumentManager {
     // Duration between each backdrop switch in ms
     private static backdropPeriodMs: number | null = 30000;
     // Timer state - so that we don't start the interval more than necessary
-    private static backdropTimer = 0;
+    private static backdropTimer: NodeJS.Timer | null = null;
 
-    // TODO make enum
-    private static status = '';
+    private static status = AppStatus.Unset;
 
     /**
      * Hide the document body on chromecast audio to save resources
@@ -186,7 +186,7 @@ export abstract class DocumentManager {
             }
 
             // Switch visible view!
-            this.setAppStatus('details');
+            this.setAppStatus(AppStatus.Details);
         });
     }
 
@@ -286,7 +286,7 @@ export abstract class DocumentManager {
      *
      * @param status - to set
      */
-    public static setAppStatus(status: string): void {
+    public static setAppStatus(status: AppStatus): void {
         this.status = status;
         document.body.className = status;
     }
@@ -296,7 +296,7 @@ export abstract class DocumentManager {
      *
      * @returns app status
      */
-    public static getAppStatus(): string {
+    public static getAppStatus(): AppStatus {
         return this.status;
     }
 
@@ -403,9 +403,9 @@ export abstract class DocumentManager {
      * Stop the backdrop rotation
      */
     public static clearBackdropInterval(): void {
-        if (this.backdropTimer !== 0) {
+        if (this.backdropTimer !== null) {
             clearInterval(this.backdropTimer);
-            this.backdropTimer = 0;
+            this.backdropTimer = null;
         }
     }
 
@@ -430,11 +430,9 @@ export abstract class DocumentManager {
             return;
         }
 
-        this.backdropTimer = <any>(
-            setInterval(
-                () => DocumentManager.setRandomUserBackdrop(),
-                this.backdropPeriodMs
-            )
+        this.backdropTimer = setInterval(
+            () => DocumentManager.setRandomUserBackdrop(),
+            this.backdropPeriodMs
         );
 
         await this.setRandomUserBackdrop();
@@ -450,7 +448,7 @@ export abstract class DocumentManager {
             this.backdropPeriodMs = period;
 
             // If the timer was running, restart it
-            if (this.backdropTimer !== 0) {
+            if (this.backdropTimer !== null) {
                 // startBackdropInterval will also clear the previous one
                 this.startBackdropInterval();
             }
@@ -629,9 +627,8 @@ export abstract class DocumentManager {
      * @returns human readable position
      */
     private static formatRunningTime(ticks: number): string {
-        const ticksPerHour = 36000000000;
-        const ticksPerMinute = 600000000;
-        const ticksPerSecond = 10000000;
+        const ticksPerMinute = TicksPerSecond * 60;
+        const ticksPerHour = ticksPerMinute * 60;
 
         const parts: string[] = [];
 
@@ -653,7 +650,7 @@ export abstract class DocumentManager {
             parts.push(minutes.toString());
         }
 
-        const seconds: number = Math.floor(ticks / ticksPerSecond);
+        const seconds: number = Math.floor(ticksToSeconds(ticks));
 
         if (seconds < 10) {
             parts.push(`0${seconds.toString()}`);

@@ -26,7 +26,6 @@ export function hasEAC3Support(): boolean {
  * Currently it's disabled because of problems getting it to work with HLS.
  *
  * @returns true if AC-3 can be played
- *
  */
 export function hasAC3Support(): boolean {
     //return castContext.canDisplayType('audio/mp4', 'ac-3');
@@ -102,10 +101,19 @@ export function getMaxBitrateSupport(): number {
 /**
  * Get the max supported video width the active Cast device supports.
  *
- * @param deviceId - Cast device id.
  * @returns Max supported width.
  */
-export function getMaxWidthSupport(deviceId: number): number {
+export function getMaxWidthSupport(deviceId: number, codec?: string): number {
+    if (codec === 'h264') {
+        // with HLS, it will produce a manifest error if we
+        // send any stream larger than the screen size...
+        return window.innerWidth;
+    }
+
+    // mkv playback can use the device limitations.
+    // The devices are capable of decoding and downscaling,
+    // they just refuse to do it with HLS. This increases
+    // the rate of direct playback.
     switch (deviceId) {
         case deviceIds.ULTRA:
         case deviceIds.CCGTV:

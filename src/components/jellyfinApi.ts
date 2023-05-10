@@ -34,10 +34,10 @@ export abstract class JellyfinApi {
         this.accessToken = accessToken;
         this.serverAddress = serverAddress;
 
-        // remove special characters from the receiver name
-        receiverName = receiverName.replace(/[^\w\s]/gi, '');
-
         if (receiverName) {
+            // remove special characters from the receiver name
+            receiverName = receiverName.replace(/[^\w\s]/gi, '');
+
             this.deviceName = receiverName;
             // deviceId just needs to be unique-ish
             this.deviceId = btoa(receiverName);
